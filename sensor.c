@@ -5,7 +5,7 @@
    and electrical noise can push a reading past full scale. */
 int clamp_reading(int reading)
 {
-    if (reading < 0) reading = 0;
+    if (reading < 0) return SENSOR_ERR_RANGE;
     if (reading > MAX_VALID) reading = MAX_VALID;
     return reading;
 }
