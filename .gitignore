@@ -1,0 +1,8 @@
+# Build output
+build/
+
+# Runtime logs
+*.log
+
+# Local configuration — copy config.env.example and fill it in
+config.env
