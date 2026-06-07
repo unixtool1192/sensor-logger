@@ -1,6 +1,8 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
+#define SENSOR_VERSION "1.2"
+
 /* Raw ADC counts from a 12-bit probe. */
 #define MIN_VALID      0
 #define MAX_VALID   4095
