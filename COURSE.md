@@ -97,6 +97,38 @@ git branch -vv                 # which local branch tracks what
 
 Then make the cache go stale deliberately: edit a file through the GitHub web UI on your fork and commit it there. Run `git status` — it still reports you up to date, because nothing has contacted the server since you cloned. Now `git fetch` and run it again.
 
+**Ignoring Files in Git.** Build the project and watch the artifacts not show up:
+
+```bash
+make                          # writes build/sensor
+git status                    # build/ is not mentioned — that is .gitignore working
+git status --ignored          # now it is
+git check-ignore -v build/sensor
+```
+
+Then meet the gotcha, which is the whole reason that branch exists:
+
+```bash
+git switch tracked-config-oops
+git status                    # config.env shows up as tracked, despite .gitignore
+git check-ignore -v config.env   # prints nothing: the file is tracked
+git check-ignore -v --no-index config.env   # the pattern was fine all along
+git rm --cached config.env    # the actual fix
+```
+
+**Pull, Commit, Push on a Shared Repo** and **Using git stash Safely** need a remote you can write to — your fork is exactly that. Commit something, push it, and confirm it landed:
+
+```bash
+git switch -c my-first-change
+printf '| TMP-4 | 0-255 | 8-bit probe |\n' >> README.md
+git commit -am "docs: add the TMP-4 probe to the calibration table"
+git push -u origin my-first-change
+```
+
+Then look at the branch on GitHub. That page of the course is hosting-agnostic: the same loop works against GitLab, Gitea, or a bare repo on a server you own. Only the web UI wrapped around it changes.
+
+To practise the part that actually bites on a shared repo — someone pushing while you were mid-edit — change the same file through the GitHub web UI, commit it there, then `git pull` and watch the tree move underneath you.
+
 **Merging, Rebasing, and Reading History.** Read the graph, then cause the conflict on purpose:
 
 ```bash
@@ -122,25 +154,6 @@ git reflog                    # every pointer move, including the ones you regre
 git reset --hard <hash>       # put the branch back where it was
 ```
 
-**Ignoring Files in Git.** Build the project and watch the artifacts not show up:
-
-```bash
-make                          # writes build/sensor
-git status                    # build/ is not mentioned — that is .gitignore working
-git status --ignored          # now it is
-git check-ignore -v build/sensor
-```
-
-Then meet the gotcha, which is the whole reason that branch exists:
-
-```bash
-git switch tracked-config-oops
-git status                    # config.env shows up as tracked, despite .gitignore
-git check-ignore -v config.env   # prints nothing: the file is tracked
-git check-ignore -v --no-index config.env   # the pattern was fine all along
-git rm --cached config.env    # the actual fix
-```
-
 **Git Worktrees and Parallel Agents.** Two checkouts of one database, at once:
 
 ```bash
@@ -148,19 +161,6 @@ git worktree add ../sensor-logger-fix42 fix-42
 git worktree list
 git worktree remove ../sensor-logger-fix42
 ```
-
-**Pull, Commit, Push on a Shared Repo** and **Using git stash Safely** need a remote you can write to — your fork is exactly that. Commit something, push it, and confirm it landed:
-
-```bash
-git switch -c my-first-change
-printf '| TMP-4 | 0-255 | 8-bit probe |\n' >> README.md
-git commit -am "docs: add the TMP-4 probe to the calibration table"
-git push -u origin my-first-change
-```
-
-Then look at the branch on GitHub. That page of the course is hosting-agnostic: the same loop works against GitLab, Gitea, or a bare repo on a server you own. Only the web UI wrapped around it changes.
-
-To practise the part that actually bites on a shared repo — someone pushing while you were mid-edit — change the same file through the GitHub web UI, commit it there, then `git pull` and watch the tree move underneath you.
 
 ## Building it
 
