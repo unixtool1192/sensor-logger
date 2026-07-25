@@ -42,7 +42,8 @@ The third one matters more than it looks. By default git shows you a conflict as
 ## What's in the history
 
 ```
-* refactor: clamp against the configured minimum   (main)
+* [CASE] docs: ...                                 (main)  <- lab housekeeping
+* refactor: clamp against the configured minimum
 * docs: update calibration table
 | * chore: add local config                        (tracked-config-oops)
 |/
@@ -59,6 +60,8 @@ The third one matters more than it looks. By default git shows you a conflict as
 ```
 
 Everything forks from `chore: release v1.2`. That commit is the **merge base** for every exercise below, which is the single most useful thing to understand about this layout.
+
+`main` carries a few `[CASE]`-tagged commits on top, which are lab housekeeping — this file and the generator script — rather than part of the worked example. Your `git log` will show more of them than the sketch above; ignore them. The story starts at `refactor: clamp against the configured minimum`.
 
 The commit hashes you see will not match the ones printed in the course docs — hashes cover content, author, and date, so they are unique to this repo. The *shape* matches.
 
@@ -81,6 +84,18 @@ git cat-file -p HEAD^{tree}   # the directory listing that commit points at
 cat .git/refs/heads/main      # 41 bytes: forty hex characters and a newline
 cat .git/HEAD                 # a pointer to a pointer
 ```
+
+**Remotes and Tracking Branches.** Prove to yourself that `origin/main` is a local cache rather than a live view of the server:
+
+```bash
+git remote -v                  # the URL, and the refspec mapping their branches into yours
+git rev-parse origin/main      # your cached idea of where their main is
+git fetch origin               # refresh that cache — nothing else moves
+git status -sb                 # ahead/behind, counted between two local pointers
+git branch -vv                 # which local branch tracks what
+```
+
+Then make the cache go stale deliberately: edit a file through the GitHub web UI on your fork and commit it there. Run `git status` — it still reports you up to date, because nothing has contacted the server since you cloned. Now `git fetch` and run it again.
 
 **Merging, Rebasing, and Reading History.** Read the graph, then cause the conflict on purpose:
 
@@ -143,7 +158,7 @@ git commit -am "docs: add the TMP-4 probe to the calibration table"
 git push -u origin my-first-change
 ```
 
-Then look at the branch on GitHub. That page of the course is written against a self-hosted GitLab, but the mechanics are identical here — only the host and the project-creation step differ, so read `glab` as `gh` and merge request as pull request.
+Then look at the branch on GitHub. That page of the course is hosting-agnostic: the same loop works against GitLab, Gitea, or a bare repo on a server you own. Only the web UI wrapped around it changes.
 
 To practise the part that actually bites on a shared repo — someone pushing while you were mid-edit — change the same file through the GitHub web UI, commit it there, then `git pull` and watch the tree move underneath you.
 
