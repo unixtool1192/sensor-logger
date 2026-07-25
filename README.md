@@ -1,3 +1,7 @@
+> **This is a teaching fixture for a git course, not a real project.**
+> The history is synthetic and built to make the course's examples runnable.
+> Start with [COURSE.md](COURSE.md).
+
 # sensor-logger
 
 A small C program that reads a 12-bit probe and clamps out-of-range values.
