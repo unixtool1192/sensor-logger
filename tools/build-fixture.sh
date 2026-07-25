@@ -1,9 +1,16 @@
 #!/usr/bin/env bash
 # Build the sensor-logger teaching fixture for the git course.
-# Idempotent: wipes and rebuilds the target directory from scratch.
+#
+#   usage: tools/build-fixture.sh [target-directory]    (default: ./sensor-logger)
+#
+# WARNING: the target directory is deleted and rebuilt from scratch.
 set -euo pipefail
 
-REPO="${1:-/c/Users/unixt/code/sensor-logger}"
+REPO="${1:-./sensor-logger}"
+
+case "$(cd "$(dirname "$REPO")" 2>/dev/null && pwd)/$(basename "$REPO")" in
+  "/"|"$HOME"|"$HOME/") echo "refusing to wipe $REPO" >&2; exit 1 ;;
+esac
 
 rm -rf "$REPO"
 mkdir -p "$REPO"

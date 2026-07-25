@@ -1,13 +1,31 @@
-# Using this repo with the git course
+# The git course lab
 
-This repository is a **teaching fixture**. `sensor-logger` is a small, real C program — it builds, it has tests, they pass — but its git history was constructed on purpose so that the examples in the git course are things you can actually run instead of read.
+This repository is the **hands-on lab** for a deep intro to git for infrastructure engineers. `sensor-logger` is a small, real C program — it builds, it has tests, they pass — but its git history was constructed on purpose so that the course's examples are things you can run instead of read.
 
-Clone it, break it, and re-clone whenever you want a clean slate. Nothing here matters.
+## Fork it first
+
+Fork this repo to your own account instead of cloning it directly. Two reasons: a fork gives you a remote you can actually **push** to, which is what makes the pull/commit/push and stash exercises work at all; and you can break anything you like without affecting anyone else.
 
 ```bash
-git clone <this repo's URL> sensor-logger
+gh repo fork unixtool1192/sensor-logger --clone
 cd sensor-logger
 ```
+
+Or use the **Fork** button on GitHub, then clone the copy that lands under your own account:
+
+```bash
+git clone https://github.com/<your-username>/sensor-logger.git
+cd sensor-logger
+```
+
+Either way `origin` now points at *your* fork and you have full write access to it. If you later want fixes made to the lab itself:
+
+```bash
+git remote add upstream https://github.com/unixtool1192/sensor-logger.git
+git fetch upstream
+```
+
+Break things freely. `git reset --hard`, `git merge --abort`, or deleting the directory and re-cloning your fork all get you back to a clean slate, and by the time you've finished the course you'll know exactly which of those to reach for.
 
 ## Do this first
 
@@ -116,7 +134,18 @@ git worktree list
 git worktree remove ../sensor-logger-fix42
 ```
 
-**Pull, Commit, Push and Using git stash Safely** need a remote you can write to. Fork this repo, or `git remote set-url origin <your own>`, and the loop in those pages works as written.
+**Pull, Commit, Push on a Shared Repo** and **Using git stash Safely** need a remote you can write to — your fork is exactly that. Commit something, push it, and confirm it landed:
+
+```bash
+git switch -c my-first-change
+printf '| TMP-4 | 0-255 | 8-bit probe |\n' >> README.md
+git commit -am "docs: add the TMP-4 probe to the calibration table"
+git push -u origin my-first-change
+```
+
+Then look at the branch on GitHub. That page of the course is written against a self-hosted GitLab, but the mechanics are identical here — only the host and the project-creation step differ, so read `glab` as `gh` and merge request as pull request.
+
+To practise the part that actually bites on a shared repo — someone pushing while you were mid-edit — change the same file through the GitHub web UI, commit it there, then `git pull` and watch the tree move underneath you.
 
 ## Building it
 
